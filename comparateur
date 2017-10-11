@@ -1,0 +1,398 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+//Constantes
+#define DIM 20
+#define Faux 0
+#define Vrai 1
+
+
+///////////////////////////////////////
+//
+//			TYPES ET STRUCTURES
+//
+///////////////////////////////////////
+
+typedef struct
+{
+	//Structure definissant un entier long de 20 chiffres au plus en précisant sa taille et son signe
+	char signe;
+	int taille;
+	int chiffre[DIM];
+} TEntierLong;
+
+
+///////////////////////////////////////
+//
+//			 SOUS-PROGRAMMES
+//
+///////////////////////////////////////
+
+ //////////																 //////////
+////////// SOUS PROGRAMMES D'INITIALISATION ET STOCKAGE D'ENTIERS LONGS //////////
+
+TEntierLong InitialisationEL() // Permet d'initialiser un Entier Long avec toutes ses composantes
+{
+	TEntierLong EntierLong;
+	int i;
+	do
+	{
+		printf("Saisissez le signe de l'entier(+/-) : "); scanf_s("%c", &EntierLong.signe); //Choix du signe de l'entier
+		fflush(stdin);
+	} while (EntierLong.signe != '+' && EntierLong.signe != '-');
+	
+	do
+	{
+		printf("Saisissez maintenant la taille de l'entier : "); scanf_s("%d", &EntierLong.taille); //Choix de la taille de l'entier
+		fflush(stdin);
+	} while (EntierLong.taille<1 || EntierLong.taille > DIM);
+
+	for (i = 0; i < EntierLong.taille; i++) // On saisie chiffre après chiffre l'Enter Long
+	{
+		do
+		{
+			printf("Veuillez  saisir le chiffre %d de votre nombre : ",i+1); //Saisie de l'entier long dans un tableau
+			scanf_s("%d", &EntierLong.chiffre[DIM - EntierLong.taille +1]);
+		} while (EntierLong.chiffre[DIM - EntierLong.taille + 1]<0 || EntierLong.chiffre[DIM - EntierLong.taille + 1]>9);
+	}
+	return(EntierLong);
+}
+
+
+/*void StockageELTableau(TEntierLong EntierLong, TEntierLong TableauStockage[DIM],int n) // Stock plusieurs Entier Long dans un tableau
+{
+	int i;
+	for (i = 0; i < n; i++) // De 0 à un entier donné, on remplit le tableau de TEntierLong d'EntierLong.
+	{
+		InitialisationEL(EntierLong);
+		TableauStockage[i] = EntierLong;
+	}
+}*/
+
+/*int StockageELFichier(TEntierLong EntierLong, int n) // Stock plusieurs Entier Long dans un fichier.txt */
+
+ //////////						   //////////
+////////// SOUS PROGRAMMES OUTILS //////////
+
+int Max(int v1, int v2)
+// Restitue la plus grande des deux valeurs en paramètre
+{
+	return (v1 > v2) ? v1 : v2;
+}
+
+int Min(int v1, int v2)
+// Restitue la plus petite des deux valeurs en paramètre
+{
+	return (v1 > v2) ? v2 : v1;
+}
+
+ //////////														 //////////
+////////// SOUS PROGRAMMES DE COMPARAISON ENTRE 2 ENTIERS LONGS //////////
+
+int Egale(TEntierLong EntierLong1, TEntierLong EntierLong2)
+{
+	// Fonction permetant de comparer 2 Entiers Long en regardant si EntierLong1 est Egale à EntierLong2, ou pas.
+	int resultat, i;
+	resultat = 0;
+	i = 0;
+	if ((EntierLong1.signe = EntierLong2.signe) && (EntierLong1.taille = EntierLong2.taille)) // Je regarde si les 2 EntierLongs sont de même signe et de même taille
+	{
+		for (i = 0; i <= EntierLong1.taille; i++)
+		{
+			if (EntierLong1.chiffre[i] = EntierLong2.chiffre[i])
+			{
+				resultat = 1;
+			}
+			else
+			{
+				break;
+				resultat = 0;
+			}
+		}
+	}
+	else
+	{
+		resultat = 0;
+	}
+
+	return (resultat);
+}
+
+int Different(TEntierLong EntierLong1, TEntierLong EntierLong2)
+{
+	// Fonction permetant de comparer 2 Entiers Long en regardant si EntierLong1 est différent de EntierLong2, ou pas.
+	int resultat, i, temp;
+	resultat = 0;
+	if ((EntierLong1.signe != EntierLong2.signe) || (EntierLong1.taille != EntierLong2.taille)) // Je regarde si les 2 EntierLongs sont de signe différents ou de taille différente
+	{
+		resultat = 1;
+	}
+	if (resultat = 0)
+	{
+		temp = Max(EntierLong1.taille, EntierLong2.taille);
+		
+		for (i = 0; i < temp; i++)
+		{
+			if (EntierLong1.chiffre[i] != EntierLong2.chiffre[i])
+			{
+				resultat = 1;
+			}
+			else
+			{
+				resultat = 0;
+			}
+		}
+	}
+	return (resultat);
+}
+
+int Superieura(TEntierLong EntierLong1, TEntierLong EntierLong2)
+{
+	// Fonction permetant de comparer 2 Entier Longs en regardant si EntierLong1 est strictement plus grand que EntierLong2, ou pas.
+	int resultat, i, temp;
+	resultat = 0;
+	temp = Max(EntierLong1.taille, EntierLong2.taille); // Compare la taille des 2 EntierLongs en retenant le plus grand
+	if ((EntierLong1.signe = '+') && (EntierLong2.signe = '-')) // Je regarde si il y a une différence de signe entre les 2 EntierLongs
+	{
+		resultat = 1;
+	}
+	if ((temp = EntierLong1.taille) && (EntierLong1.signe = '+') && (EntierLong2.signe = '+'))
+	{
+		resultat = 1;
+	}
+	if ((temp = EntierLong2.taille) && (EntierLong1.signe = '-') && (EntierLong2.signe = '-'))
+	{
+		resultat = 1;
+	}
+	else if ((resultat = 0) && ((EntierLong1.signe = '+') && (EntierLong2.signe = '+')))
+	{
+		for (i = 0; i < EntierLong1.taille; i++)
+		{
+			if (EntierLong1.chiffre[i] > EntierLong2.chiffre[i]) resultat = 1;
+			else resultat = 0;
+		}
+	}
+	else if ((resultat = 0) && ((EntierLong1.signe = '-') && (EntierLong2.signe = '-')))
+	{
+		for (i = 0; i < EntierLong1.taille; i++)
+		{
+			if (EntierLong1.chiffre[i] < EntierLong2.chiffre[i]) resultat = 1;
+			else resultat = 0;
+		}
+
+	}
+	return (resultat);
+}
+
+int SuperieurouEgale(TEntierLong EntierLong1, TEntierLong EntierLong2)
+{
+	// Fonction permetant de comparer 2 Entier Longs en regardant si EntierLong1 est plus grand ou egale a EntierLong2.
+	int resultat, i, temp;
+	resultat = 0;
+	temp = Min(EntierLong1.taille, EntierLong2.taille);
+
+	if ((EntierLong1.signe = EntierLong2.signe) && (EntierLong1.taille = EntierLong2.taille)) // Je regarde si les 2 EntierLongs sont de même signe et de même taille
+	{
+		for (i = 0; i <= EntierLong1.taille; i++)
+		{
+			if (EntierLong1.chiffre[i] = EntierLong2.chiffre[i])
+			{
+				resultat = 1;
+			}
+			else
+			{
+				resultat = 0;
+			}
+		}
+	}
+
+	else if ((EntierLong1.signe = '-') && (EntierLong2.signe = '+')) // Je regarde si il y a une différence de signe entre les 2 EntierLongs
+	{
+		resultat = 1;
+	}
+	if ((temp = EntierLong1.taille) && (EntierLong1.signe = '+') && (EntierLong2.signe = '+'))
+	{
+		resultat = 1;
+	}
+	if ((temp = EntierLong2.taille) && (EntierLong1.signe = '-') && (EntierLong2.signe = '-'))
+	{
+		resultat = 1;
+	}
+	else if ((resultat = 0) && ((EntierLong1.signe = '+') && (EntierLong2.signe = '+')))
+	{
+		for (i = 0; i < EntierLong1.taille; i++)
+		{
+
+			if (EntierLong1.chiffre[i] > EntierLong2.chiffre[i])
+			{
+				resultat = 1;
+			}
+			else resultat = 0;
+		}
+	}
+	else if ((resultat = 0) && ((EntierLong1.signe = '-') && (EntierLong2.signe = '-')))
+	{
+		for (i = 0; i < EntierLong1.taille; i++)
+		{
+			if (EntierLong1.chiffre[i] < EntierLong2.chiffre[i]) resultat = 1 ;
+			else resultat = 0;
+		}
+	}
+	return (resultat);
+}
+
+int Inferieura(TEntierLong EntierLong1, TEntierLong EntierLong2)
+{
+	// Fonction permetant de comparer 2 Entier Longs en regardant si EntierLong1 est strictement plus petit que EntierLong2, ou pas.
+	int resultat, i, temp;
+	resultat = 0;
+	temp = Min(EntierLong1.taille, EntierLong2.taille); // Compare la taille des 2 EntierLongs en retenant le plus petit
+	if ((EntierLong1.signe = '-') && (EntierLong2.signe = '+')) // Je regarde si il y a une différence de signe entre les 2 EntierLongs
+	{
+		resultat = 1;
+	}
+	if ((temp = EntierLong1.taille) && (EntierLong1.signe = '+') && (EntierLong2.signe = '+'))
+	{
+		resultat = 1;
+	}
+	if ((temp = EntierLong2.taille) && (EntierLong1.signe = '-') && (EntierLong2.signe = '-'))
+	{
+		resultat = 1;
+	}
+	else if ((resultat = 0) && ((EntierLong1.signe = '+') && (EntierLong2.signe = '+')))
+	{
+		for (i = 0; i < EntierLong1.taille; i++)
+		{
+			if (EntierLong1.chiffre[i] < EntierLong2.chiffre[i])
+			{
+				resultat = 1;
+			}
+		}
+	}
+	else if ((resultat = 0) && ((EntierLong1.signe = '-') && (EntierLong2.signe = '-')))
+	{
+		for (i = 0; i < EntierLong1.taille; i++)
+		{
+			if (EntierLong1.chiffre[i] > EntierLong2.chiffre[i])
+			{
+				resultat = 1;
+			}
+			else resultat = 0;
+		}		
+	}
+return (resultat);
+}
+
+int InferieurouEgale(TEntierLong EntierLong1, TEntierLong EntierLong2)
+{
+	// Fonction permetant de comparer 2 Entier Longs en regardant si EntierLong1 est plus petit ou egale a EntierLong2.
+	int resultat, i, temp;
+	resultat = 0;
+	temp = Min(EntierLong1.taille, EntierLong2.taille);
+
+	if ((EntierLong1.signe = EntierLong2.signe) && (EntierLong1.taille = EntierLong2.taille)) // Je regarde si les 2 EntierLongs sont de même signe et de même taille
+	{
+		for (i = 0; i <= EntierLong1.taille; i++)
+		{
+			if (EntierLong1.chiffre[i] = EntierLong2.chiffre[i])
+			{
+				resultat = 1;
+			}
+			else
+			{
+				resultat = 0;
+			}
+		}
+	}
+
+	else if ((EntierLong1.signe = '-') && (EntierLong2.signe = '+')) // Je regarde si il y a une différence de signe entre les 2 EntierLongs
+	{
+		resultat = 1;
+	}
+	else if (temp = EntierLong1.taille)
+	{
+		resultat = 1;
+	}
+	else if ((resultat = 0) && ((EntierLong1.signe = '+') && (EntierLong2.signe = '+')))
+	{
+		for (i = 0; i < EntierLong1.taille; i++)
+		{
+			if (EntierLong1.chiffre[i] < EntierLong2.chiffre[i])
+			{
+				resultat = 1;
+			}
+			else resultat = 0;
+		}
+	}
+	else if ((resultat = 0) && ((EntierLong1.signe = '-') && (EntierLong2.signe = '-')))
+	{
+		for (i = 0; i < EntierLong1.taille; i++)
+		{
+			if (EntierLong1.chiffre[i] > EntierLong2.chiffre[i])
+			{
+				resultat = 1;
+			}
+			else resultat = 0;
+		}
+	}
+	return (resultat);
+}
+
+
+void main()
+{
+	//Variables
+	TEntierLong EL1, EL2;
+	char Comparaison;
+	int result;
+
+	EL1 = InitialisationEL();
+	printf("Saisie d'un 2nd Entier Long auquel sera compare le 1er \n"); fflush(stdin);;
+	EL2 = InitialisationEL();
+
+	printf("Ce programme permet de savoir si un Entier Long est: = , ! (différent) , > , } (plus grand ou egal) , < , { (inferieur ou egal) \n");
+	printf("Merci de bien orthographier la fonction voulue comme montre ci-dessus!\n");
+	do
+	{
+		printf("Saisissez l'operation de comparaison voulue : "); scanf_s("%c", &Comparaison); fflush(stdin);
+	} while (Comparaison != '=' && Comparaison != '!=' && Comparaison != '>' && Comparaison != '>=' && Comparaison != '<' && Comparaison != '<=');
+
+	if (Comparaison == '=')
+	{
+		result = Egale(EL1, EL2);
+		if (result == 1) printf("Les 2 nombres sont egaux\n");
+		else printf("Les 2 nombres ne sont pas egaux\n");
+	}
+	else if (Comparaison == '!')
+	{
+		result = Different(EL1, EL2);
+		if (result == 1) printf("Les 2 nombres sont differents\n");
+		else printf("Les 2 nombres ne sont pas differents\n");
+	}
+	else if (Comparaison == '>')
+	{
+		result = Superieura(EL1, EL2);
+		if (result == 1) printf("Le 1er est superieur au 2nd\n");
+		else printf("Le 1er n'est pas superieur au 2nd\n");
+	}
+	else if (Comparaison == '}')
+	{
+		result = SuperieurouEgale(EL1, EL2);
+		if (result == 1) printf("Le 1er est superieur ou egale au 2nd\n");
+		else printf("Le 1er n'est pas superieur ou egale au second\n");
+	}
+	else if (Comparaison == '<')
+	{
+		result = Inferieura(EL1, EL2);
+		if (result == 1) printf("Le 1er est inferieur au 2nd\n");
+		else printf("Le 1er n'est pas inferieur au second\n");
+	}
+	else if (Comparaison == '{')
+	{
+		result = InferieurouEgale(EL1, EL2);
+		if (result == 1) printf("Le 1er est inferieur ou egale au 2nd\n");
+		else printf("Le 1er n'est pas inferieur ou egale au second\n");
+	}
+	system("pause");
+}
